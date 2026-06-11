@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FactureController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +23,9 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('payments', PaymentController::class)
         ->only(['index', 'show', 'create', 'store']);
 
+    Route::resource('factures', FactureController::class)
+        ->only(['index', 'show', 'create', 'store', 'destroy']);
+
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
 
@@ -33,9 +37,9 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/payments/{payment}/print', [PaymentController::class, 'printInvoice'])
     ->name('payments.print');
 
-    Route::get('/payments/{payment}/invoice-print', [PaymentController::class, 'printInvoicePdf'])
-    ->name('payments.invoice-print');
+    Route::get('/factues/{facture}/invoice-print', [FactureController::class, 'printInvoicePdf'])
+    ->name('factures.invoice-print');
 
-    Route::get('/payments/{payment}/export-pdf', [PaymentController::class, 'exportPdf'])
-    ->name('payments.export-pdf');
+    //Route::get('/payments/{payment}/export-pdf', [PaymentController::class, 'exportPdf'])
+    //->name('payments.export-pdf');
 });

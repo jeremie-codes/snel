@@ -41,7 +41,31 @@
 
     <div class="card">
         <div class="card-header border-light justify-content-between">
-            <h4 class="card-title">Profils utilisateurs</h4>
+            <div class="row justify-content-center">
+                <form method="GET" action="{{ route('users.index') }}" class="d-flex gap-2">
+                    <div class="app-search">
+                        <input
+                            type="text"
+                            name="search"
+                            class="form-control"
+                            placeholder="Nom ou code de l'utilisteur ..."
+                            value="{{ request('search') }}"
+                        />
+                        <i class="ti ti-search app-search-icon text-muted"></i>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark">
+                        <i class="ti ti-filter fs-lg"></i>
+                        Rechercher
+                    </button>
+
+                    @if(request()->filled('search'))
+                        <a href="{{ route('users.index') }}" class="btn btn-danger">
+                            Réinitialiser
+                        </a>
+                    @endif
+                </form>
+            </div>
             {{-- <a href="{{ route('users.create') }}" class="btn btn-primary"><i class="ti ti-plus me-1"></i>Nouveau profil</a> --}}
             <button type="button" data-bs-toggle="modal" data-bs-target="#addUserModal" class="btn btn-secondary"><i class="ti ti-plus me-1"></i>Nouvel utilisateur</button>
         </div>
@@ -50,6 +74,7 @@
                 <thead class="bg-dark align-middle">
                     <tr class="text-uppercase fs-xxs">
                         <th class="text-white">N°</th>
+                        <th class="text-white">Nom d'utilisateur</th>
                         <th class="text-white">Nom</th>
                         <th class="text-white">point de vente</th>
                         <th class="text-white">Rôle</th>
@@ -61,6 +86,7 @@
                     @forelse ($users as $user)
                         <tr>
                             <td class="fw-semibold">{{ $loop->iteration }}</td>
+                            <td class="fw-semibold">{{ $user->username ?? 'N/A' }}</td>
                             <td class="fw-semibold">{{ $user->name ?? 'N/A' }}</td>
                             <td>{{ $user->point_vente ?? 'N/A' }}</td>
                             <td><span class="badge bg-dark-subtle text-dark text-uppercase px-4 py-2 border border-dark">{{ $user->role ?? 'N/A' }}</span></td>
@@ -166,7 +192,7 @@
                                     <form method="POST" action="{{ route('users.update', $user) }}">
                                         @method('PUT')
                                         <div class="modal-body">
-                                            @include('users._form', ['user' => $user])
+                                            @include('users._form', ['user' => $user, 'communes' => $communes])
                                         </div>
 
                                         <div class="modal-footer">
@@ -197,7 +223,7 @@
 
                 <form id="addUserForm" action="{{ route('users.store') }}" method="POST">
                     <div class="modal-body">
-                        @include('users._form', ['user' => null])
+                        @include('users._form', ['user' => null, 'communes' => $communes])
                     </div>
 
                     <div class="modal-footer">

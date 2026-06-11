@@ -61,8 +61,8 @@
                             @endif
                         </div>
                         <div class="col">
-                            <a href="{{ route('payments.index') }}" class="btn btn-info bg-gradient w-100"><i class="ti ti-coin me-1"></i>
-                                Historique
+                            <a href="{{ route('factures.index') }}" class="btn btn-info bg-gradient w-100"><i class="ti ti-plus me-1"></i>
+                                Facture
                             </a>
                         </div>
                     </div>

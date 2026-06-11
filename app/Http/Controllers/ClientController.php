@@ -8,7 +8,7 @@ use App\Models\Client;
 use App\Models\Payment;
 use App\Models\Rate;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ClientController extends Controller
@@ -16,7 +16,8 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+
+    public function index(Request $request): View
     {
         $lastClient = Client::latest('id')->first();
 
@@ -27,8 +28,20 @@ class ClientController extends Controller
             $reference = 'CLI' . str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
         }
 
+        $clients = Client::withCount('payments')
+            ->when($request->search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('reference', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('clients.index', [
-            'clients' => Client::withCount('payments')->latest()->paginate(10),
+            'clients' => $clients,
             'reference' => $reference
         ]);
     }
@@ -42,7 +55,6 @@ class ClientController extends Controller
 
             Client::create($request->validated());
             return redirect()->route('clients.index')->with('status', 'Client enregistré avec succès.');
-
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Une erreur est survenue lors de la création du client.');
         }
@@ -95,11 +107,10 @@ class ClientController extends Controller
      */
     public function update(UpdateClientRequest $request, Client $client): RedirectResponse
     {
-       try {
+        try {
 
             $client->update($request->validated());
             return redirect()->route('clients.index')->with('status', 'Client modifié avec succès.');
-
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Une erreur est survenue lors de la modification du client.');
         }

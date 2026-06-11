@@ -17,36 +17,36 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = User::factory()->admin()->create([
-            'name' => 'Administrateur',
-            'email' => 'admin@example.com',
+        User::factory()->admin()->create([
+            'name' => 'Nom admin',
+            'point_vente' => 'Kinshasa',
             'username' => 'admin',
             'password' => bcrypt('password'),
         ]);
 
-        $agent = User::factory()->agent()->create([
-            'name' => 'Agent Caisse',
-            'email' => 'agent@example.com',
-            'username' => 'agent',
-            'password' => bcrypt('password'),
-        ]);
+        for ($i = 0; $i < 9; $i++) {
+            User::factory()->agent()
+                ->create(
+                    ['name' => 'Nom agent ' . $i, 'point_vente' => 'Kinshasa', 'username' => 'agent' . $i, 'password' => bcrypt('password')]
+                );
+        }
 
-        $client = Client::factory()->create([
-            'user_id' => $agent->id,
-            'name' => 'Client Demo',
-            'email' => 'client@example.com',
-            'reference' => 'CLI-0001',
-        ]);
+        $names = [
+            'Jean Robert',
+            'Françoise Mukendi',
+            'Bernard Kabongo',
+            'John Doe',
+            'Benois Ngaba',
+        ];
 
-        Payment::factory()
-            ->count(3)
-            ->for($client)
-            ->for($agent, 'agent')
-            ->sequence(
-                ['invoice_number' => 'FAC-2026-001', 'amount' => 100, 'currency' => 'USD', 'payment_method' => 'cash'],
-                ['invoice_number' => 'FAC-2026-001', 'amount' => 75, 'currency' => 'USD', 'payment_method' => 'bank_transfer'],
-                ['invoice_number' => 'FAC-2026-001', 'amount' => 25, 'currency' => 'CDF', 'payment_method' => 'mobile_money'],
-            )
-            ->create();
+        for ($i = 0; $i < 5; $i++) {
+            Client::factory()->create([
+                'user_id' => $i + 1,
+                'reference' => 'CLI00000' . $i,
+                'name' => $names[$i],
+                'address' => '155, Kongolo, C/Kinshasa, Q/Djalo',
+            ]);
+        }
+
     }
 }

@@ -14,19 +14,14 @@
                     @csrf
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-3 border-dashed border-bottom border-dark pb-3">
-                            <div class="auth-brand mb-0 p-2 border border-solid">
-                                <a href="index.html" class="logo-dark">
-                                    {{-- <img src="{{ asset('assets/images/logo-black.png') }}" alt="dark logo" /> --}}
-                                    <span class="d-flex align-item-end">
-                                        <img src="{{ asset('assets/images/snel.jpg') }}" style="height:70px !important" alt="logo">
-                                    </span>
-                                </a>
-                                <a href="index.html" class="logo-light">
-                                    {{-- <img src="{{ asset('assets/images/logo.png') }}" alt="logo" /> --}}
-                                    <span class="d-flex align-item-end">
-                                        <img src="{{ asset('assets/images/snel.jpg') }}" style="height:70px !important" alt="logo">
-                                    </span>
-                                </a>
+                             <div class="logo-block d-flex align-items-center">
+                                <img src="{{ asset('assets/images/snel.jpg') }}" width="100">
+
+                                <div class="ms-3 fw-bold">
+                                    Société<br>
+                                    Nationale<br>
+                                    d'Electricité SA
+                                </div>
                             </div>
                             <div class="text-end">
                                 <span class="badge bg-warning-subtle text-warning mb-2 fs-xs px-2 py-1">Nouveau paiement</span>
@@ -51,7 +46,7 @@
                                 <label for="amount" class="form-label">Montant payé</label>
                                 <input id="amount" name="amount" type="number" min="0.01" step="0.01" placeholder="ex: 1000" value="{{ old('amount') }}" class="form-control" required>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="currency" class="form-label">Devise</label>
                                 <select id="currency" name="currency" class="form-select" required>
                                     @foreach (['CDF', 'USD',] as $currency)
@@ -59,17 +54,13 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="payment_method" class="form-label">Moyen de paiement</label>
                                 <select id="payment_method" name="payment_method" class="form-select" required>
                                     @foreach ($methods as $value => $label)
                                         <option value="{{ $value }}" @selected(old('payment_method') === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="paid_at" class="form-label">Date du paiement</label>
-                                <input id="paid_at" name="paid_at" type="datetime-local" value="{{ old('paid_at') }}" class="form-control">
                             </div>
                             <div class="col-12">
                                 <label for="notes" class="form-label">Note (facultatif)</label>

@@ -21,7 +21,6 @@ class ClientFactory extends Factory
         return [
             'user_id' => null,
             'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'reference' => fake()->unique()->bothify('CLI-####'),
             'status' => 'active',

@@ -92,51 +92,51 @@
             font-weight: bold;
         }
 
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
+        .table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:8px;
         }
 
         .table td,
-        .table th {
-            border: 1px solid #000;
-            padding: 6px;
+        .table th{
+            border:1px solid #000;
+            padding:6px;
         }
 
-        .total {
-            font-size: 20px;
-            font-weight: bold;
+        .total{
+            font-size:20px;
+            font-weight:bold;
         }
 
-        .section {
-            margin-top: 10px;
+        .section{
+            margin-top:10px;
         }
 
-        .text-right {
-            text-align: right;
+        .text-right{
+            text-align:right;
         }
 
-        .text-center {
-            text-align: center;
+        .text-center{
+            text-align:center;
         }
 
-        .watermark {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: .08;
-            z-index: 0;
+        .watermark{
+            position:absolute;
+            top:40%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            opacity:.08;
+            z-index:0;
         }
 
-        .watermark img {
-            width: 500px;
+        .watermark img{
+            width:500px;
         }
 
-        .invoice {
-            position: relative;
-            z-index: 1;
+        .invoice{
+            position:relative;
+            z-index:1;
         }
     </style>
 </head>
@@ -148,12 +148,11 @@
             <img src="{{ asset('assets/images/snel.png') }}">
         </div>
 
-        <div class="top-header"
-            style="font-weight: bold; display: flex; align-items: center; justify-content: space-between;">
+        <div class="top-header"  style="font-weight: bold; display: flex; align-items: center;">
 
-            <div class="logo-block d-flex align-items-center">
+            <div class="logo-block">
 
-                <img src="{{ asset('assets/images/snel.jpg') }}" width="100">
+                <img src="{{ asset('assets/images/snel.jpg') }}">
 
                 <div>
                     Société<br>
@@ -165,53 +164,52 @@
 
             <div class="barcode">
 
-                <img src="https://barcode.tec-it.com/barcode.ashx?data={{ urlencode($facture->code) }}&code=Code128"
-                    width="300">
+                <img src="https://barcode.tec-it.com/barcode.ashx?data={{ urlencode($payment->invoice_number) }}&code=Code128">
             </div>
 
             <div class="date-block">
 
                 Date d'édition :
-                {{ $facture->created_at->format('d/m/Y') }}
+                {{ now()->format('d/m/Y') }}
 
             </div>
 
         </div>
 
-        <div class="text-center fw-bold">
+        <div class="title">
             FACTURE D'ENERGIE ELECTRIQUE BASSE TENSION
         </div>
 
-        <table class="table table-bordered border-dark">
+        <table class="table">
 
-            <tr>
+            <tr >
 
                 <td width="45%" style="font-weight: bold;">
 
                     Centre :
-                    CVS {{ strtoupper($facture->user->point_vente) }}
+                    CVS {{ strtoupper($payment->client->commune) }}
 
                     <br><br>
 
                     PA :
-                    {{ $facture->pa }}
+                    {{ $paNumber }}
 
                     <br><br>
 
                     Nom :
-                    {{ strtoupper($facture->client->name) }}
+                    {{ strtoupper($payment->client->name) }}
 
                     <br><br>
 
                     Adresse :
-                    {{ $facture->client->address }}
+                    {{ $payment->client->address }}
 
                 </td>
 
-                <td width="35%" style="font-weight: bold;">
+                <td width="35%"  style="font-weight: bold;">
 
                     Point de Perception :
-                    {{ strtoupper($facture->user->point_vente) }}
+                    {{ strtoupper($payment->agent->point_vente) }}
 
                     <br><br>
 
@@ -230,7 +228,7 @@
 
                 </td>
 
-                <td width="20%" style="font-weight: bold;">
+                <td width="20%"  style="font-weight: bold;">
 
                     Cabine : 0000-00
 
@@ -252,7 +250,7 @@
 
         </table>
 
-        <table class="table table-bordered border-dark">
+       <table class="table section">
             <tr>
                 <th colspan="2">Index</th>
                 <th rowspan="2">kwh calculé</th>
@@ -285,7 +283,7 @@
                     840
                 </th>
                 <th>
-                    {{ ucfirst($facture->created_at->translatedFormat('F Y')) }}
+                    {{ ucfirst($payment->paid_at->translatedFormat('F Y')) }}
                 </th>
             </tr>
             <tr>
@@ -295,26 +293,34 @@
                 <th>Valeur en (CDF)</th>
             </tr>
 
-            <tr class="text-center">
-                <td colspan="3">
-                    50
-                </td>
+            @foreach($invoicePayments as $invoicePayment)
+                <tr class="text-center">
+                    <td colspan="3">
+                        {{ $loop->iteration }} - {{ 50 + ($loop->iteration * 10) }}
+                    </td>
 
-                <td colspan="2">
-                    30
-                </td>
+                    <td colspan="2">
+                        {{ 60 - ($loop->iteration * 10) }}
+                    </td>
 
-                <td colspan="2">
-                    332,7000
-                </td>
+                    <td colspan="2">
+                        332,7000
+                    </td>
 
-                <td>
-                    {{ number_format($facture->amount, 2, ',', ' ') }}
-                </td>
-            </tr>
+                    <td>
+                        @php
+                            $valueCdf = $invoicePayment->currency === 'USD'
+                                ? $invoicePayment->amount * $rate
+                                : $invoicePayment->amount;
+                        @endphp
+
+                        {{ number_format($valueCdf, 2, ',', ' ') }}
+                    </td>
+                </tr>
+            @endforeach
 
             @php
-                $ttc = $facture->amount;
+                $ttc = $invoiceTotals->total_cdf;
                 $ht = $ttc / 1.16;
                 $eclairage = $ht * 0.01;
                 $tva = $ht * 0.16;
@@ -334,14 +340,19 @@
                 </td>
 
             </tr>
-            <tr style="font-weight: bold">
-                <td colspan="7" class="text-right px-5" style="text-align: right;">
+            <tr>
+                <td colspan="7" class="text-right" style="font-weight: bold">
                     MONTANT FACTURE
                 </td>
 
                 <td class="text-center total">
 
-                    {{ number_format($facture->amount, 2, ',', ' ') }}
+                    {{ number_format(
+                        (float)$invoiceTotals->total_cdf,
+                        2,
+                        ',',
+                        ' '
+                    ) }}
 
                     CDF
 

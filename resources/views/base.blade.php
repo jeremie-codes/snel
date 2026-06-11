@@ -20,9 +20,14 @@
             <div class="content-page">
                 <div class="container-fluid">
                     <div class="page-title-head d-flex align-items-center">
-                        <div class="flex-grow-1">
+                        <div class="flex-grow-1 d-flex gap-3 align-items-center">
                             <h4 class="page-main-title m-0">@yield('subtitle', 'Caisse')</h4>
+
+                            <div class="f">
+                                <a href="#" class="btn-dark btn btn-sm">Taux: {{ $rate ? $rate : '22 500' }} CDF</a>
+                            </div>
                         </div>
+
 
                         <div class="text-end">
                             <ol class="breadcrumb m-0 py-0">
@@ -36,6 +41,13 @@
                         <div class="alert alert-success border border-success alert-dismissible fade show" role="alert">
                             {{ session('status') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger border border-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     @endif
 

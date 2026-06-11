@@ -31,4 +31,9 @@ class Payment extends Model
     {
         return $this->belongsTo(User::class, 'agent_id');
     }
+
+    public function facture(): BelongsTo
+    {
+        return $this->belongsTo(Facture::class, 'invoice_number');
+    }
 }

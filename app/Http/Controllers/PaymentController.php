@@ -4,29 +4,56 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
 use App\Models\Client;
+use App\Models\Facture;
 use App\Models\Payment;
 use App\Models\Rate;
 use Illuminate\Http\RedirectResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+
+    public function index(Request $request): View
     {
         $user = auth()->user();
         $client = $user->client;
 
-        return view('payments.index', [
-            'payments' => Payment::with(['client', 'agent'])
-                ->when($user->isClient(), fn ($query) => $client
+        $payments = Payment::with(['client', 'agent'])
+
+            ->when(
+                $user->isClient(),
+                fn($query) => $client
                     ? $query->whereBelongsTo($client, 'client')
-                    : $query->whereRaw('1 = 0'))
-                ->latest('paid_at')
-                ->paginate(50),
+                    : $query->whereRaw('1 = 0')
+            )
+
+            ->when($request->search, function ($query, $search) {
+
+                $query->where(function ($q) use ($search) {
+
+                    $q->where('invoice_number', 'like', "%{$search}%")
+
+                        ->orWhereHas('client', function ($client) use ($search) {
+                            $client->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+
+            ->when($request->payment_method, function ($query, $paymentMethod) {
+                $query->where('payment_method', $paymentMethod);
+            })
+
+            ->latest('paid_at')
+            ->paginate(50)
+            ->withQueryString();
+
+        return view('payments.index', [
+            'payments' => $payments,
             'paymentsCount' => Payment::count(),
             'cashCount' => Payment::where('payment_method', 'cash')->count(),
             'momoCount' => Payment::where('payment_method', 'mobile_money')->count(),
@@ -54,13 +81,20 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request): RedirectResponse
     {
-        Payment::create([
+        $facture = Facture::where('code', $request->invoice_number)->first();
+        if (!$facture) {
+            return back()
+                ->withInput()
+                ->with('error', 'Facture introuvable.');
+        }
+
+        $payment = Payment::create([
             ...$request->validated(),
             'agent_id' => $request->user()->id,
-            'paid_at' => $request->date('paid_at') ?? now(),
+            'paid_at' => now(),
         ]);
 
-        return redirect()->route('payments.index')->with('status', 'Paiement enregistré avec succès.');
+        return redirect()->route('payments.show', $payment)->with('status', 'Paiement enregistré avec succès.');
     }
 
     /**
@@ -72,10 +106,10 @@ class PaymentController extends Controller
         $rate = Rate::first()->value ?? 2250; // 1 USD = X CDF
 
         $invoicePayments = Payment::with('agent')
-                ->where('invoice_number', $payment->invoice_number)
-                ->where('client_id', $payment->client_id)
-                ->oldest('paid_at')
-                ->get();
+            ->where('invoice_number', $payment->invoice_number)
+            ->where('client_id', $payment->client_id)
+            ->oldest('paid_at')
+            ->get();
 
         $invoiceTotals = Payment::query()
             ->get()
@@ -104,8 +138,11 @@ class PaymentController extends Controller
 
         //dd($invoiceTotals);
 
+        $facture = Facture::where('code', $payment->invoice_number)->first() ?? null;
+
         return view('payments.show', [
             'payment' => $payment->load(['client', 'agent']),
+            'facture' => $facture,
             'invoicePayments' => $invoicePayments,
             'invoiceTotals' => $invoiceTotals->first()
         ]);
@@ -174,10 +211,10 @@ class PaymentController extends Controller
         );
 
         $invoicePayments = Payment::with('agent')
-                ->where('invoice_number', $payment->invoice_number)
-                ->where('client_id', $payment->client_id)
-                ->oldest('paid_at')
-                ->get();
+            ->where('invoice_number', $payment->invoice_number)
+            ->where('client_id', $payment->client_id)
+            ->oldest('paid_at')
+            ->get();
 
         $invoiceTotals = Payment::query()
             ->get()
@@ -229,7 +266,7 @@ class PaymentController extends Controller
         ]);
 
         return $pdf->download(
-            'Facture-'.$payment->invoice_number.'.pdf'
+            'Facture-' . $payment->invoice_number . '.pdf'
         );
     }
 }

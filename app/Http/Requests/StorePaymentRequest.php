@@ -24,7 +24,7 @@ class StorePaymentRequest extends FormRequest
     {
         return [
             'client_id' => ['required', 'integer', Rule::exists('clients', 'id')->where('status', 'active')],
-            'invoice_number' => ['required', 'string', 'max:100'],
+            'invoice_number' => ['required', 'string'],
             'amount' => ['required', 'numeric', 'min:0.01', 'max:999999999999.99'],
             'currency' => ['required', Rule::in(['CDF', 'USD', 'EUR'])],
             'payment_method' => ['required', Rule::in(['cash', 'mobile_money', 'bank_transfer'])],

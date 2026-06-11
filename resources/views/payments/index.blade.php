@@ -80,22 +80,43 @@
         <div class="col-12">
             <div data-table data-table-rows-per-page="8" class="card">
                 <div class="card-header border-light justify-content-between">
-                    <form class="d-flex gap-2">
+                    <form method="GET" action="{{ route('payments.index') }}" class="d-flex gap-2">
                         <div class="app-search">
-                            <input data-tablesearch type="text" class="form-control" placeholder="Rechercher numéro facture ..." />
+                            <input type="text" name="search" class="form-control"
+                                placeholder="Rechercher numéro facture ..." value="{{ request('search') }}" />
                             <i class="ti ti-search app-search-icon text-muted"></i>
                         </div>
+
                         <div class="app-search">
-                            <select data-table-filter="status" class="form-select form-control my-1 my-md-0">
-                                <option value="All">Tous</option>
-                                <option value="cash">Espèce</option>
-                                <option value="mobile_money">Mobile money</option>
-                                <option value="bank_transfer">Virement</option>
+                            <select name="payment_method" class="form-select form-control my-1 my-md-0">
+                                <option value="">Tous</option>
+
+                                <option value="cash" @selected(request('payment_method') === 'cash')>
+                                    Espèce
+                                </option>
+
+                                <option value="mobile_money" @selected(request('payment_method') === 'mobile_money')>
+                                    Mobile money
+                                </option>
+
+                                <option value="bank_transfer" @selected(request('payment_method') === 'bank_transfer')>
+                                    Virement
+                                </option>
                             </select>
+
                             <i class="ti ti-circle-check app-search-icon text-muted"></i>
                         </div>
 
-                        <button class="btn btn-dark rounded-circle btn-icon"> <i class="ti ti-search fs-lg"></i></button>
+                        <button type="submit" class="btn btn-dark rounded-circle btn-icon">
+                            <i class="ti ti-search fs-lg"></i>
+                        </button>
+
+                        @if (request()->filled('search') || request()->filled('payment_method'))
+                            <a href="{{ route('payments.index') }}" class="btn btn-danger rounded-circle btn-icon">
+                                <i class="ti ti-x"></i>
+                            </a>
+                        @endif
+
                     </form>
 
                     <div class="d-flex align-items-center gap-2">

@@ -105,7 +105,7 @@
                                 <form method="POST" action="{{ route('profile.update', $user) }}">
                                         {{-- @method('PUT') --}}
                                         <div class="modal-body">
-                                            @include('users._form', ['user' => $user])
+                                            @include('users._form', ['user' => $user, 'communes' => $communes])
                                         </div>
 
                                     <div class="modal-footer">

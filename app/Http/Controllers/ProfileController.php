@@ -15,9 +15,36 @@ class ProfileController extends Controller
      */
     public function index(): View
     {
+        $communes = [
+            'Bandalungwa',
+            'Barumbu',
+            'Bumbu',
+            'Gombe',
+            'Kalamu',
+            'Kasa-Vubu',
+            'Kimbanseke',
+            'Kinshasa',
+            'Kintambo',
+            'Kisenso',
+            'Lemba',
+            'Limete',
+            'Lingwala',
+            'Makala',
+            'Maluku',
+            'Masina',
+            'Matete',
+            'Mont-Ngafula',
+            'Ndjili',
+            'Ngaba',
+            'Ngaliema',
+            'Ngiri-Ngiri',
+            'Nsele',
+            'Selembao',
+        ];
         return view('users.profile', [
             'user' => auth()->user(),
             'roles' => User::roles(),
+            'communes' => $communes
         ]);
     }
 

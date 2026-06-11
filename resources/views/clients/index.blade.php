@@ -4,21 +4,29 @@
 
 @section('body')
     <div class="row justify-content-center mb-4">
-    <form class="d-flex gap-2">
+        <form method="GET" action="{{ route('clients.index') }}" class="d-flex gap-2">
             <div class="app-search">
-                <input data-tablesearch type="text" class="form-control" placeholder="Nom ou code du client ..." />
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Nom ou code du client ..."
+                    value="{{ request('search') }}"
+                />
                 <i class="ti ti-search app-search-icon text-muted"></i>
             </div>
-            <div class="app-search">
-                <select data-table-filter="status" class="form-select form-control my-1 my-md-0">
-                    <option value="All">Tous</option>
-                    <option value="active">Actif</option>
-                    <option value="inactive">Inactif</option>
-                </select>
-                <i class="ti ti-circle-check app-search-icon text-muted"></i>
-            </div>
 
-            <button class="btn btn-dark"> <i class="ti ti-filter fs-lg"></i> Filtrer</button>
+            <button type="submit" class="btn btn-dark">
+                <i class="ti ti-filter fs-lg"></i>
+                Rechercher
+            </button>
+
+            @if(request()->filled('search'))
+                <a href="{{ route('clients.index') }}" class="btn btn-danger">
+                    Réinitialiser
+                </a>
+            @endif
+
         </form>
     </div>
 

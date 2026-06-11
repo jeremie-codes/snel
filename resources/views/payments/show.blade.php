@@ -11,21 +11,16 @@
                     <div class="card">
                         <div class="card-body px-4">
                             <!-- Invoice Header -->
-                            <div
-                                class="d-flex align-items-center justify-content-between mb-3 border-dashed border-bottom border-dark pb-3">
-                                <div class="auth-brand mb-0">
-                                    <a href="index.html" class="logo-dark">
-                                        {{-- <img src="{{ asset('assets/images/logo-black.png') }}" alt="dark logo" /> --}}
-                                        <span class="d-flex align-item-end">
-                                            <img src="{{ asset('assets/images/snel.jpg') }}" style="height:70px !important" alt="logo">
-                                        </span>
-                                    </a>
-                                    <a href="index.html" class="logo-light">
-                                        {{-- <img src="{{ asset('assets/images/logo.png') }}" alt="logo" /> --}}
-                                        <span class="d-flex align-item-end">
-                                            <img src="{{ asset('assets/images/snel.jpg') }}" style="height:70px !important" alt="logo">
-                                        </span>
-                                    </a>
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-dashed border-bottom border-dark pb-3">
+                                <div class="logo-block d-flex align-items-center">
+                                    <img src="{{ asset('assets/images/snel.jpg') }}" width="80">
+
+                                    <div class="ms-3 fw-bold">
+                                        Société<br>
+                                        Nationale<br>
+                                        d'Electricité SA
+                                    </div>
+
                                 </div>
                                 <div class="text-end">
                                     <span class="badge bg-success-subtle text-success mb-2 fs-xs px-2 py-1">ENCAISSE</span>
@@ -121,18 +116,23 @@
                     <div class="card card-top-sticky">
                         <div class="card-body">
                             <div class="justify-content-center d-flex flex-column gap-2">
-                                <a href="{{ route('payments.print', $payment) }}" target="_blank" class="btn btn-dark">
+                                <a href="{{ route('payments.print', $payment) }}" class="btn btn-dark">
                                     <i class="ti ti-printer me-1"></i> Imprimer Acquit
                                 </a>
 
-                                <a href="{{ route('payments.invoice-print', $payment) }}" target="_blank" class="btn btn-light">
-                                    <i class="ti ti-printer me-1"></i> Imprimer Facture
-                                </a>
+                                {{-- @if($facture)
+                                    <a href="{{ route('factures.invoice-print', $facture) }}" class="btn btn-light">
+                                        <i class="ti ti-printer me-1"></i> Imprimer Facture attachée
+                                    </a>
+                                @endif --}}
 
-                                <a href="{{ route('payments.export-pdf', $payment) }}" class="btn btn-primary">
+                                <a href="{{ route('payments.index') }}" class="btn btn-primary">
+                                    <i class="ti ti-printer me-1"></i> Retour
+                                </a>
+                                {{-- <a href="{{ route('payments.export-pdf', $payment) }}" class="btn btn-primary">
                                     <i class="ti ti-upload me-1"></i>
                                     Exporter
-                                </a>
+                                </a> --}}
                             </div>
                         </div>
                         <!-- end card-body-->

@@ -44,6 +44,12 @@
                         <span class="menu-text">Paiements</span>
                     </a>
                 </li>
+                <li class="side-nav-item py-1" style="border-bottom: 1px solid #232735">
+                    <a href="{{ route('factures.index') }}" class="side-nav-link">
+                        <span class="menu-icon"><i class="ti ti-plus"></i></span>
+                        <span class="menu-text">Générer une facture</span>
+                    </a>
+                </li>
                 @if (auth()->user()->canManagePayments())
                     <li class="side-nav-item py-1" style="border-bottom: 1px solid #232735">
                         <a href="{{ route('payments.create') }}" class="side-nav-link">

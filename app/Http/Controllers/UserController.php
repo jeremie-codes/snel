@@ -7,13 +7,15 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+
+    public function index(Request $request): View
     {
         $communes = [
             'Bandalungwa',
@@ -41,9 +43,25 @@ class UserController extends Controller
             'Nsele',
             'Selembao',
         ];
+
+        $users = User::query()
+            ->where('role', '!=', User::RoleClient)
+
+            ->when($request->search, function ($query, $search) {
+
+                $query->where(function ($q) use ($search) {
+
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%");
+                });
+            })
+
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('users.index', [
-            //'users' => User::where('role', '!=', User::RoleClient)->where('id', '!=', auth()->user()->id)->orderBy('name')->latest()->paginate(10),
-            'users' => User::where('role', '!=', User::RoleClient)->orderBy('name')->latest()->paginate(10),
+            'users' => $users,
             'roles' => User::roles(),
             'communes' => $communes
         ]);
