@@ -247,7 +247,7 @@
                         <div class="card-body">
                             <div class="justify-content-center d-flex flex-column gap-2">
 
-                                <a href="{{ route('factures.invoice-print', $facture) }}" class="btn btn-dark">
+                                <a href="{{ route('factures.invoice-print', $facture) }}" target="_blank" class="btn btn-dark">
                                     <i class="ti ti-printer me-1"></i> Imprimer Facture
                                 </a>
 

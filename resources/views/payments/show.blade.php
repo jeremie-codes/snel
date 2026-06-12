@@ -116,7 +116,7 @@
                     <div class="card card-top-sticky">
                         <div class="card-body">
                             <div class="justify-content-center d-flex flex-column gap-2">
-                                <a href="{{ route('payments.print', $payment) }}" class="btn btn-dark">
+                                <a href="{{ route('payments.print', $payment) }}"  target="_blank" class="btn btn-dark">
                                     <i class="ti ti-printer me-1"></i> Imprimer Acquit
                                 </a>
 
